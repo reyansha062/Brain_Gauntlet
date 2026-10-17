@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Gauntlet 100: The Cognitive Trials</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 60%, #030712 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.1);
+    }
+    /* Mode-dependent utilities */
+    body.device-mobile .desktop-hint { display: none !important; }
+    body.device-laptop .mobile-control-pad { display: none !important; }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 overflow-x-hidden antialiased">
+
+  <!-- DEVICE SELECTION PROMPT OVERLAY (First-time or Switch) -->
+  <div id="deviceModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity duration-300">
+    <div class="glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 text-center border border-indigo-500/40 shadow-2xl transform scale-100 transition-all">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-cyan-400 mx-auto flex items-center justify-center text-3xl shadow-lg shadow-indigo-500/30 mb-4 animate-pulse">
+        🎮
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">Select Your Device</h2>
+      <p class="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+        Choose your platform to calibrate touchscreen buttons, keyboard hotkeys, and game resolution for the best experience.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <!-- Mobile Option Card -->
+        <button onclick="setDeviceMode('mobile')" class="group p-5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700/80 hover:border-cyan-400 transition-all flex flex-col items-center text-center shadow-lg hover:shadow-cyan-500/20 active:scale-95">
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+            📱
+          </div>
+          <span class="font-bold text-white text-base mb-1">Mobile / Tablet</span>
+          <span class="text-[11px] text-slate-400 leading-normal">On-screen D-pads, tap controls & compact touch layout</span>
+        </button>
+
+        <!-- Laptop / Desktop Option Card -->
+        <button onclick="setDeviceMode('laptop')" class="group p-5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700/80 hover:border-indigo-400 transition-all flex flex-col items-center text-center shadow-lg hover:shadow-indigo-500/20 active:scale-95">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+            💻
+          </div>
+          <span class="font-bold text-white text-base mb-1">Laptop / PC</span>
+          <span class="text-[11px] text-slate-400 leading-normal">Keyboard arrow navigation, click shortcuts & mouse precision</span>
+        </button>
+      </div>
+
+      <p class="text-[11px] text-slate-500">You can toggle this mode anytime from the top bar.</p>
+    </div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="w-full border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="openLevelSelect()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-[2px] shadow-lg shadow-indigo-500/25">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-black text-cyan-400 text-lg">
+            Ω
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base md:text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+              BRAIN GAUNTLET
+            </h1>
+            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">100 Trials</span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">Cognitive Evolution Protocol</p>
+        </div>
+      </div>
+
+      <!-- Header Controls: Device Switcher, Sound, Hint, Level Grid -->
+      <div class="flex items-center space-x-2 md:space-x-3">
+        <!-- Device toggle badge -->
+        <button id="deviceToggleBtn" onclick="openDeviceModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-300 text-xs font-medium flex items-center gap-1.5 transition" title="Change Device Mode">
+          <span id="deviceIcon">💻</span>
+          <span id="deviceLabel" class="hidden sm:inline font-mono text-[11px]">Laptop</span>
+        </button>
+
+        <button id="soundBtn" onclick="toggleAudio()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-300 hover:text-white transition shadow-sm" title="Toggle Audio">
+          <svg id="soundIconOn" class="w-4 h-4 md:w-5 md:h-5 fill-current" viewBox="0 0 24 24"><path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9.77H8.5l-4-4H1v6h3.5l4 4V13zm4.5-.5c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          <svg id="soundIconOff" class="w-4 h-4 md:w-5 md:h-5 fill-current hidden text-rose-400" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+        </button>
+
+        <button onclick="openHintModal()" class="px-3 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-medium text-xs md:text-sm flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4 fill-amber-400" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14H8a4 4 0 01-2.828-6.828C5.748 6.596 6.786 6 8 6h4c1.214 0 2.252.596 2.828 1.172A4 4 0 0112 14z"/></svg>
+          <span>Hint</span>
+        </button>
+
+        <button onclick="openLevelSelect()" class="px-3.5 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-400/40 text-indigo-200 font-semibold text-xs md:text-sm flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          <span>Levels</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Stage -->
+  <main class="flex-1 flex flex-col items-center justify-start p-3 sm:p-6 w-full max-w-4xl mx-auto">
+    
+    <!-- Meta HUD Bar -->
+    <div class="w-full glass-panel rounded-2xl p-4 mb-4 flex flex-wrap items-center justify-between gap-3 border border-slate-700/50">
+      <div class="flex items-center space-x-3">
+        <div class="px-3 py-1.5 rounded-xl bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono font-bold text-sm tracking-wider flex items-center gap-1.5">
+          <span>LEVEL</span>
+          <span id="hudLevelNum" class="text-white text-base font-extrabold">1</span>
+          <span class="text-slate-400 font-normal text-xs">/100</span>
+        </div>
+        <div>
+          <h2 id="hudLevelTitle" class="font-bold text-slate-100 text-sm sm:text-base leading-tight">Tactical Tic-Tac-Toe</h2>
+          <p id="hudLevelCategory" class="text-[11px] text-cyan-400 font-medium tracking-wide">TIER 1 • REASONING & STRATEGY</p>
+        </div>
+      </div>
+
+      <!-- Action Status / Move Counters / Reset -->
+      <div class="flex items-center space-x-2 sm:space-x-3 ml-auto">
+        <div id="dynamicHudStat" class="px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700/80 font-mono text-xs sm:text-sm text-slate-200 flex items-center gap-1.5">
+          <span id="statLabel" class="text-slate-400 text-xs">TURNS LEFT:</span>
+          <span id="statValue" class="font-bold text-cyan-400">3</span>
+        </div>
+        <button onclick="restartLevel()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-rose-900/30 hover:border-rose-500/40 border border-slate-700 text-slate-300 hover:text-rose-300 transition" title="Retry Level">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Objective Banner -->
+    <div id="objectiveBanner" class="w-full bg-indigo-950/40 border border-indigo-500/20 rounded-xl px-4 py-2.5 mb-4 text-xs sm:text-sm text-indigo-200/90 flex items-start gap-2.5">
+      <span class="text-indigo-400 font-bold mt-0.5">🎯</span>
+      <span id="objectiveText">You play as <strong>X</strong>. Win against the Defense Matrix AI within 5 total turns.</span>
+    </div>
+
+    <!-- Interactive Game Canvas / Frame -->
+    <div class="w-full glass-panel rounded-3xl p-4 sm:p-8 flex flex-col items-center justify-center min-h-[420px] relative overflow-hidden transition-all duration-300 border border-slate-700/60 shadow-2xl">
+      <!-- Dynamic Container for Active Level DOM -->
+      <div id="gameViewport" class="w-full flex flex-col items-center justify-center">
+        <!-- Injected via JavaScript -->
+      </div>
+      
+      <!-- In-Game Interactive Notification Toast -->
+      <div id="gameToast" class="absolute bottom-5 px-5 py-2.5 rounded-xl bg-slate-900/95 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold tracking-wide shadow-2xl opacity-0 translate-y-3 pointer-events-none transition-all duration-200 z-30">
+        Message
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Footer: Previous / Next Quick Steps -->
+    <div class="w-full mt-4 flex items-center justify-between text-xs text-slate-400 px-2">
+      <button id="prevLevelBtn" onclick="jumpLevel(currentLevel - 1)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-slate-800/80 transition text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+        ← Previous Trial
+      </button>
+      <div class="flex items-center gap-1.5">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="totalUnlockedText">Unlocked: 1 / 100</span>
+      </div>
+      <button id="nextLevelBtn" onclick="jumpLevel(currentLevel + 1)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-slate-800/80 transition text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+        Next Trial →
+      </button>
+    </div>
+  </main>
+
+  <!-- Level Select Modal (Full 100-Level Map) -->
+  <div id="levelSelectModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-200">
+    <div class="glass-panel w-full max-w-3xl max-h-[85vh] rounded-3xl p-5 sm:p-7 flex flex-col border border-indigo-500/30 shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+            <span>🗺️</span> 100-Level Cognitive Roadmap
+          </h3>
+          <p class="text-xs text-slate-400">Complete trials sequentially to unlock future sectors</p>
+        </div>
+        <button onclick="closeLevelSelect()" class="p-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Scrollable Grid of 100 Levels -->
+      <div id="levelGridContainer" class="flex-1 overflow-y-auto py-4 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 pr-1">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> Unlocked</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-600"></span> Current</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></span> Locked</div>
+        </div>
+        <button onclick="devUnlockAll()" class="text-indigo-400 hover:text-indigo-300 underline font-mono text-[11px]">
+          [DEV: Unlock All 100]
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hint Modal -->
+  <div id="hintModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+    <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-amber-500/30 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-2xl mb-3">
+        💡
+      </div>
+      <h3 class="text-lg font-bold text-white mb-1">Strategic Hint</h3>
+      <p id="hintLevelSubtitle" class="text-xs text-amber-400 font-mono mb-4">Level 1: Tactical Tic-Tac-Toe</p>
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-sm text-slate-300 text-left leading-relaxed mb-5" id="hintModalBody">
+        Take any corner or the center square.
+      </div>
+      <button onclick="closeHintModal()" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition">
+        Understood
+      </button>
+    </div>
+  </div>
+
+  <!-- Victory Level Transition Overlay Modal -->
+  <div id="victoryModal" class="fixed inset-0 z-50 bg-indigo-950/80 backdrop-blur-lg hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+    <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 text-center border border-cyan-400/50 shadow-2xl transform scale-90 transition-transform duration-200">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 mx-auto flex items-center justify-center text-3xl shadow-lg shadow-cyan-500/30 mb-4 animate-bounce">
+        ✨
+      </div>
+      <h3 class="text-2xl font-black text-white tracking-tight mb-1">TRIAL CONQUERED!</h3>
+      <p id="victorySubtext" class="text-xs font-mono text-cyan-300 mb-6">Neural Pathway Synthesized</p>
+
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 mb-6 text-left space-y-2">
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Time Expended:</span>
+          <span id="victoryTime" class="font-mono text-cyan-400 font-bold">12.4s</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Global Progress:</span>
+          <span id="victoryGlobalProgress" class="font-mono text-emerald-400 font-bold">2 / 100</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="restartLevel(); closeVictoryModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition">
+          Replay
+        </button>
+        <button onclick="advanceNextLevel()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition">
+          Next Trial →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, vol = 0.15, sweepTo = null) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        if (sweepTo) {
+          osc.frequency.exponentialRampToValueAtTime(sweepTo, audioCtx.currentTime + duration);
+        }
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    const Sound = {
+      tap: () => playTone(600, 'sine', 0.08, 0.1, 800),
+      click: () => playTone(400, 'triangle', 0.05, 0.1),
+      flip: () => playTone(520, 'sine', 0.1, 0.12),
+      beep: (n = 1) => playTone(300 + n * 120, 'sine', 0.22, 0.18),
+      success: () => {
+        setTimeout(() => playTone(523.25, 'triangle', 0.15, 0.2), 0);
+        setTimeout(() => playTone(659.25, 'triangle', 0.15, 0.2), 120);
+        setTimeout(() => playTone(783.99, 'triangle', 0.2, 0.25), 240);
+        setTimeout(() => playTone(1046.50, 'triangle', 0.35, 0.28), 380);
+      },
+      fail: () => {
+        setTimeout(() => playTone(320, 'sawtooth', 0.12, 0.15, 240), 0);
+        setTimeout(() => playTone(220, 'sawtooth', 0.25, 0.2, 140), 120);
+      },
+      eat: () => playTone(880, 'sine', 0.09, 0.2, 1200),
+      explosion: () => playTone(180, 'sawtooth', 0.35, 0.3, 40)
+    };
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIconOn').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('soundIconOff').classList.toggle('hidden', soundEnabled);
+      if (soundEnabled) Sound.tap();
+    }
+
+    const STORAGE_KEY = 'BRAIN_GAUNTLET_100_SAVE';
+    const DEVICE_KEY = 'BRAIN_GAUNTLET_DEVICE_MODE';
+    let deviceMode = 'laptop'; // 'mobile' | 'laptop'
+    let maxUnlockedLevel = 1;
+    let currentLevel = 1;
+    let levelStartTime = Date.now();
+
+    function initDeviceMode() {
+      const savedDevice = localStorage.getItem(DEVICE_KEY);
+      if (savedDevice === 'mobile' || savedDevice === 'laptop') {
+        applyDeviceMode(savedDevice);
+        document.getElementById('deviceModal').classList.add('hidden');
+      } else {
+        // Auto-detect as a sensible default, but still prompt
+        const isMobileScreen = window.innerWidth <= 768 || ('ontouchstart' in window);
+        setDeviceMode(isMobileScreen ? 'mobile' : 'laptop', false);
+        // Show modal to confirm user's choice
+        document.getElementById('deviceModal').classList.remove('hidden');
+      }
+    }
+
+    function setDeviceMode(mode, save = true) {
+      applyDeviceMode(mode);
+      if (save) {
+        localStorage.setItem(DEVICE_KEY, mode);
+        closeDeviceModal();
+        Sound.tap();
+        showToast(`Mode switched to ${mode === 'mobile' ? '📱 Mobile' : '💻 Laptop / PC'}`);
+      }
+    }
+
+    function applyDeviceMode(mode) {
+      deviceMode = mode;
+      document.body.classList.remove('device-mobile', 'device-laptop');
+      document.body.classList.add(`device-${mode}`);
+
+      const icon = document.getElementById('deviceIcon');
+      const label = document.getElementById('deviceLabel');
+      if (mode === 'mobile') {
+        icon.textContent = '📱';
+        label.textContent = 'Mobile';
+      } else {
+        icon.textContent = '💻';
+        label.textContent = 'Laptop';
+      }
+    }
+
+    function openDeviceModal() {
+      Sound.tap();
+      const modal = document.getElementById('deviceModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeDeviceModal() {
+      const modal = document.getElementById('deviceModal');
+      modal.classList.add('hidden');
+    }
+
+    function loadProgress() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          maxUnlockedLevel = Math.max(1, Math.min(100, parsed.maxUnlocked || 1));
+          currentLevel = Math.max(1, Math.min(maxUnlockedLevel, parsed.current || 1));
+        } catch (e) {
+          maxUnlockedLevel = 1;
+          currentLevel = 1;
+        }
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        maxUnlocked: maxUnlockedLevel,
+        current: currentLevel
+      }));
+    }
+
+    const LEVEL_SPECS = [
+      { id: 1, title: 'Tactical Tic-Tac-Toe', tier: 'TIER 1 • CASUAL STRATEGY', desc: 'You play as X. Complete three in a row to win against the relaxed AI.', hint: 'Open on any corner or the center square. The AI plays casually!' },
+      { id: 2, title: 'Simon Memory Grid', tier: 'TIER 1 • WORKING MEMORY', desc: 'Memorize and reproduce the glowing tile sequence without error.', hint: 'Keep your eyes on the center to view all quadrants at once.' },
+      { id: 3, title: 'Lights Out 3x3', tier: 'TIER 1 • LOGIC TOGGLE', desc: 'Clicking a light flips it and all orthogonally adjacent tiles. Deactivate all lights.', hint: 'Work from the perimeter inward to clear remaining lights.' },
+      { id: 4, title: 'Sliding 8-Puzzle', tier: 'TIER 1 • SPATIAL HEURISTIC', desc: 'Rearrange tiles 1 through 8 in order with the empty slot at bottom-right.', hint: 'Anchor numbers 1, 2, and 3 along the top row first.' },
+      { id: 5, title: 'Mini Minesweeper (5x5)', tier: 'TIER 1 • DEDUCTION', desc: 'Safely uncover all clear cells and flag the hidden mines using proximity numbers.', hint: 'Numbers denote how many adjacent neighbors contain active mines.' },
+      { id: 6, title: 'Quick Math 24', tier: 'TIER 1 • ARITHMETIC AGILITY', desc: 'Combine 4 numerical values using arithmetic operations to form exactly 24.', hint: 'Think about factor pairs of 24: 3×8, 4×6, or 12×2.' },
+      { id: 7, title: 'Tower of Hanoi', tier: 'TIER 1 • RECURSION', desc: 'Transfer all disks from Peg A to Peg C. A larger disk may never sit atop a smaller disk.', hint: 'Alternate moving the smallest disk to advance the larger bases.' },
+      { id: 8, title: 'Mini Snake Protocol', tier: 'TIER 1 • ARCADE COORDINATION', desc: 'Pilot the cyber-serpent to consume 5 power nodes without colliding with walls or yourself.', hint: 'Plan your trajectory 2 turns ahead to maintain an open loop.' },
+      { id: 9, title: 'Color Flood (5x5)', tier: 'TIER 1 • EXPANSION HEURISTIC', desc: 'Flood the entire 5x5 board into one uniform color starting from the top-left tile.', hint: 'Choose colors that capture the largest adjacent connected clusters.' },
+      { id: 10, title: 'Mastermind Codebreaker', tier: 'TIER 1 • LOGICAL INDUCTION', desc: 'Deduce the secret hidden color code. Green = correct color & spot, Yellow = wrong spot.', hint: 'Eliminate unused colors step-by-step using clue tallies.' }
+    ];
+
+    const THEME_NAMES = [
+      'Spatial Navigation', 'Reflex Matrix', 'Cryptographic Deduction', 'Tactical AI',
+      'Kinetic Physics', 'Grid Partitioning', 'Split-Brain Parallelism', 'Advanced Heuristics', 'Quantum Cognition', 'Master Gauntlet'
+    ];
+    for (let i = 11; i <= 100; i++) {
+      const tierNum = Math.min(10, Math.floor((i - 1) / 10) + 1);
+      const themeName = THEME_NAMES[tierNum - 1] || 'Cognitive Protocol';
+      LEVEL_SPECS.push({
+        id: i,
+        title: `Trial ${i}: ${themeName} #${((i - 1) % 10) + 1}`,
+        tier: `TIER ${tierNum} • ${themeName.toUpperCase()}`,
+        desc: `High-order cognitive protocol. Decrypt sector rules, maintain synchronization, and beat trial threshold.`,
+        hint: `Sector ${tierNum} emphasizes systematic reduction. Check input boundaries.`
+      });
+    }
+
+    function showToast(msg, duration = 2000) {
+      const toast = document.getElementById('gameToast');
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-3');
+      }, duration);
+    }
+
+    function updateHud() {
+      const spec = LEVEL_SPECS[currentLevel - 1] || LEVEL_SPECS[0];
+      document.getElementById('hudLevelNum').textContent = currentLevel;
+      document.getElementById('hudLevelTitle').textContent = spec.title;
+      document.getElementById('hudLevelCategory').textContent = spec.tier;
+      document.getElementById('objectiveText').innerHTML = spec.desc;
+      document.getElementById('totalUnlockedText').textContent = `Unlocked: ${maxUnlockedLevel} / 100`;
+
+      document.getElementById('prevLevelBtn').disabled = currentLevel <= 1;
+      document.getElementById('nextLevelBtn').disabled = currentLevel >= maxUnlockedLevel;
+    }
+
+    function winLevel() {
+      Sound.success();
+      const elapsed = ((Date.now() - levelStartTime) / 1000).toFixed(1);
+      document.getElementById('victoryTime').textContent = `${elapsed}s`;
+
+      if (currentLevel === maxUnlockedLevel && maxUnlockedLevel < 100) {
+        maxUnlockedLevel++;
+        saveProgress();
+      }
+      document.getElementById('victoryGlobalProgress').textContent = `${maxUnlockedLevel} / 100`;
+
+      const victoryModal = document.getElementById('victoryModal');
+      victoryModal.classList.remove('hidden');
+      setTimeout(() => {
+        victoryModal.classList.remove('opacity-0');
+        victoryModal.children[0].classList.remove('scale-90');
+        victoryModal.children[0].classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeVictoryModal() {
+      const victoryModal = document.getElementById('victoryModal');
+      victoryModal.classList.add('opacity-0');
+      victoryModal.children[0].classList.add('scale-90');
+      victoryModal.children[0].classList.remove('scale-100');
+      setTimeout(() => victoryModal.classList.add('hidden'), 200);
+    }
+
+    function advanceNextLevel() {
+      closeVictoryModal();
+      if (currentLevel < 100) {
+        jumpLevel(currentLevel + 1);
+      } else {
+        showToast('🏆 Master of the 100 Trials! You conquered the entire gauntlet!');
+      }
+    }
+
+    function jumpLevel(lvl) {
+      if (lvl < 1 || lvl > maxUnlockedLevel) return;
+      currentLevel = lvl;
+      saveProgress();
+      closeLevelSelect();
+      loadLevel(currentLevel);
+    }
+
+    function restartLevel() {
+      Sound.click();
+      loadLevel(currentLevel);
+    }
+
+    function openHintModal() {
+      Sound.tap();
+      const spec = LEVEL_SPECS[currentLevel - 1];
+      document.getElementById('hintLevelSubtitle').textContent = `Level ${spec.id}: ${spec.title}`;
+      document.getElementById('hintModalBody').textContent = spec.hint;
+      const modal = document.getElementById('hintModal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeHintModal() {
+      Sound.click();
+      const modal = document.getElementById('hintModal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function openLevelSelect() {
+      Sound.tap();
+      renderLevelGrid();
+      const modal = document.getElementById('levelSelectModal');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.children[0].classList.remove('scale-95');
+        modal.children[0].classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeLevelSelect() {
+      Sound.click();
+      const modal = document.getElementById('levelSelectModal');
+      modal.classList.add('opacity-0');
+      modal.children[0].classList.add('scale-95');
+      modal.children[0].classList.remove('scale-100');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function renderLevelGrid() {
+      const container = document.getElementById('levelGridContainer');
+      container.innerHTML = '';
+      for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        const isUnlocked = i <= maxUnlockedLevel;
+        const isCurrent = i === currentLevel;
+
+        btn.className = `h-10 sm:h-11 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center relative ${
+          isCurrent 
+            ? 'bg-indigo-600 text-white ring-2 ring-cyan-400 shadow-md shadow-indigo-500/50' 
+            : isUnlocked 
+              ? 'bg-slate-800/90 text-emerald-300 hover:bg-slate-700 border border-emerald-500/30' 
+              : 'bg-slate-900/60 text-slate-600 border border-slate-800 cursor-not-allowed opacity-60'
+        }`;
+        btn.textContent = i;
+        if (isUnlocked) {
+          btn.onclick = () => jumpLevel(i);
+        } else {
+          btn.disabled = true;
+        }
+        container.appendChild(btn);
+      }
+    }
+
+    function devUnlockAll() {
+      maxUnlockedLevel = 100;
+      saveProgress();
+      renderLevelGrid();
+      updateHud();
+      showToast('⚡ All 100 Trials unlocked by Developer Override');
+    }
+
+    let activeLevelCleanup = null;
+
+    function loadLevel(lvl) {
+      if (activeLevelCleanup && typeof activeLevelCleanup === 'function') {
+        try { activeLevelCleanup(); } catch (e) { console.warn(e); }
+        activeLevelCleanup = null;
+      }
+
+      levelStartTime = Date.now();
+      updateHud();
+      const viewport = document.getElementById('gameViewport');
+      viewport.innerHTML = '';
+
+      switch (lvl) {
+        case 1: activeLevelCleanup = setupLevel1(viewport); break;
+        case 2: activeLevelCleanup = setupLevel2(viewport); break;
+        case 3: activeLevelCleanup = setupLevel3(viewport); break;
+        case 4: activeLevelCleanup = setupLevel4(viewport); break;
+        case 5: activeLevelCleanup = setupLevel5(viewport); break;
+        case 6: activeLevelCleanup = setupLevel6(viewport); break;
+        case 7: activeLevelCleanup = setupLevel7(viewport); break;
+        case 8: activeLevelCleanup = setupLevel8(viewport); break;
+        case 9: activeLevelCleanup = setupLevel9(viewport); break;
+        case 10: activeLevelCleanup = setupLevel10(viewport); break;
+        default:
+          activeLevelCleanup = setupProceduralLevel(viewport, lvl);
+          break;
+      }
+    }
+
+    function setupLevel1(container) {
+      let board = Array(9).fill(null);
+      let turnsLeft = 5;
+      let gameActive = true;
+
+      document.getElementById('statLabel').textContent = 'TURNS LEFT:';
+      document.getElementById('statValue').textContent = turnsLeft;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-3 gap-2.5 p-3 bg-slate-900/80 rounded-2xl border border-indigo-500/30';
+      
+      function renderGrid() {
+        grid.innerHTML = '';
+        board.forEach((val, i) => {
+          const cell = document.createElement('button');
+          cell.className = `w-20 h-20 sm:w-24 sm:h-24 rounded-xl font-mono text-3xl font-black flex items-center justify-center transition-all ${
+            val === 'X' 
+              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-400/50 shadow-inner' 
+              : val === 'O' 
+                ? 'bg-rose-500/20 text-rose-400 border border-rose-400/50 shadow-inner' 
+                : 'bg-slate-800/80 hover:bg-slate-700/80 text-transparent border border-slate-700'
+          }`;
+          cell.textContent = val || '-';
+          cell.onclick = () => onPlayerMove(i);
+          grid.appendChild(cell);
+        });
+      }
+
+      function checkWinner(b) {
+        const lines = [
+          [0,1,2],[3,4,5],[6,7,8],
+          [0,3,6],[1,4,7],[2,5,8],
+          [0,4,8],[2,4,6]
+        ];
+        for (let [x,y,z] of lines) {
+          if (b[x] && b[x] === b[y] && b[x] === b[z]) return b[x];
+        }
+        return b.includes(null) ? null : 'TIE';
+      }
+
+      function onPlayerMove(idx) {
+        if (!gameActive || board[idx]) return;
+        Sound.tap();
+        board[idx] = 'X';
+        turnsLeft--;
+        document.getElementById('statValue').textContent = turnsLeft;
+        renderGrid();
+
+        const result = checkWinner(board);
+        if (result === 'X') {
+          gameActive = false;
+          winLevel();
+          return;
+        } else if (result === 'TIE' || turnsLeft <= 0) {
+          gameActive = false;
+          Sound.fail();
+          showToast('Turn limit reached or stalemate. Resetting...');
+          setTimeout(() => setupLevel1(container), 1200);
+          return;
+        }
+
+        // Casual AI move (easy to win)
+        gameActive = false;
+        setTimeout(() => {
+          aiMove();
+          renderGrid();
+          const afterAi = checkWinner(board);
+          if (afterAi === 'O') {
+            Sound.fail();
+            showToast('AI completed three in a row. Try again!');
+            setTimeout(() => setupLevel1(container), 1200);
+          } else if (afterAi === 'TIE' || turnsLeft <= 0) {
+            Sound.fail();
+            showToast('Stalemate reached. Resetting...');
+            setTimeout(() => setupLevel1(container), 1200);
+          } else {
+            gameActive = true;
+          }
+        }, 250);
+      }
+
+      function aiMove() {
+        Sound.flip();
+        // 30% chance AI blocks, otherwise plays an open non-center space
+        const open = board.map((v, i) => v === null ? i : null).filter(v => v !== null);
+        if (open.length === 0) return;
+
+        // Occasional block
+        if (Math.random() < 0.3) {
+          for (let i of open) {
+            board[i] = 'X';
+            if (checkWinner(board) === 'X') {
+              board[i] = 'O';
+              return;
+            }
+            board[i] = null;
+          }
+        }
+
+        // Casual pick
+        const pick = open[Math.floor(Math.random() * open.length)];
+        board[pick] = 'O';
+      }
+
+      renderGrid();
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel2(container) {
+      const TARGET_LENGTH = 5;
+      const sequence = [];
+      const userSeq = [];
+      let isPlayback = false;
+
+      document.getElementById('statLabel').textContent = 'PROGRESS:';
+      document.getElementById('statValue').textContent = `0 / ${TARGET_LENGTH}`;
+
+      for (let i = 0; i < TARGET_LENGTH; i++) {
+        sequence.push(Math.floor(Math.random() * 4));
+      }
+
+      const colors = [
+        { id: 0, bg: 'bg-cyan-500', glow: 'shadow-cyan-400' },
+        { id: 1, bg: 'bg-amber-500', glow: 'shadow-amber-400' },
+        { id: 2, bg: 'bg-emerald-500', glow: 'shadow-emerald-400' },
+        { id: 3, bg: 'bg-fuchsia-500', glow: 'shadow-fuchsia-400' }
+      ];
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-2 gap-4 p-4 bg-slate-900/80 rounded-3xl border border-indigo-500/30';
+
+      const buttons = [];
+      colors.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.className = `w-28 h-28 sm:w-32 sm:h-32 rounded-2xl ${c.bg} opacity-30 transition-all duration-150 transform active:scale-95`;
+        btn.onclick = () => handleUserTap(c.id);
+        buttons.push(btn);
+        grid.appendChild(btn);
+      });
+
+      function flashButton(id, duration = 300) {
+        Sound.beep(id + 1);
+        buttons[id].classList.remove('opacity-30');
+        buttons[id].classList.add('opacity-100', 'scale-105', 'shadow-2xl', colors[id].glow);
+        setTimeout(() => {
+          buttons[id].classList.add('opacity-30');
+          buttons[id].classList.remove('opacity-100', 'scale-105', 'shadow-2xl', colors[id].glow);
+        }, duration);
+      }
+
+      function playSequence() {
+        isPlayback = true;
+        showToast('Observe memory sequence...', 1200);
+        let step = 0;
+        const interval = setInterval(() => {
+          if (step >= sequence.length) {
+            clearInterval(interval);
+            isPlayback = false;
+            showToast('Repeat the pattern!', 1200);
+            return;
+          }
+          flashButton(sequence[step]);
+          step++;
+        }, 500);
+      }
+
+      function handleUserTap(id) {
+        if (isPlayback) return;
+        flashButton(id, 200);
+        userSeq.push(id);
+        const currentIndex = userSeq.length - 1;
+
+        if (userSeq[currentIndex] !== sequence[currentIndex]) {
+          Sound.fail();
+          showToast('Sequence broken! Resetting...', 1500);
+          userSeq.length = 0;
+          setTimeout(() => playSequence(), 1000);
+          return;
+        }
+
+        document.getElementById('statValue').textContent = `${userSeq.length} / ${TARGET_LENGTH}`;
+
+        if (userSeq.length === TARGET_LENGTH) {
+          isPlayback = true;
+          winLevel();
+        }
+      }
+
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
+      setTimeout(() => playSequence(), 400);
+
+      return () => { isPlayback = true; };
+    }
+
+    function setupLevel3(container) {
+      let state = [
+        [false, true, false],
+        [true,  true, true],
+        [false, true, false]
+      ];
+      let moves = 0;
+
+      document.getElementById('statLabel').textContent = 'MOVES:';
+      document.getElementById('statValue').textContent = moves;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-3 gap-3 p-4 bg-slate-900/80 rounded-2xl border border-indigo-500/30';
+
+      function render() {
+        grid.innerHTML = '';
+        for (let r = 0; r < 3; r++) {
+          for (let c = 0; c < 3; c++) {
+            const btn = document.createElement('button');
+            const on = state[r][c];
+            btn.className = `w-20 h-20 sm:w-24 sm:h-24 rounded-2xl transition-all duration-200 flex items-center justify-center ${
+              on 
+                ? 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/50 scale-100' 
+                : 'bg-slate-800/90 text-slate-500 border border-slate-700 hover:bg-slate-700/80'
+            }`;
+            btn.innerHTML = on 
+              ? '<span class="text-xl">💡</span>' 
+              : '<span class="text-xs font-mono">OFF</span>';
+            btn.onclick = () => toggle(r, c);
+            grid.appendChild(btn);
+          }
+        }
+      }
+
+      function toggle(r, c) {
+        Sound.tap();
+        moves++;
+        document.getElementById('statValue').textContent = moves;
+
+        const coords = [[r,c], [r-1,c], [r+1,c], [r,c-1], [r,c+1]];
+        coords.forEach(([row, col]) => {
+          if (row >= 0 && row < 3 && col >= 0 && col < 3) {
+            state[row][col] = !state[row][col];
+          }
+        });
+        render();
+
+        if (state.every(row => row.every(val => val === false))) {
+          winLevel();
+        }
+      }
+
+      render();
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel4(container) {
+      let tiles = [1, 2, 3, 4, 5, 6, 0, 7, 8];
+      let moves = 0;
+
+      document.getElementById('statLabel').textContent = 'MOVES:';
+      document.getElementById('statValue').textContent = moves;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-3 gap-2.5 p-3.5 bg-slate-900/90 rounded-2xl border border-indigo-500/30';
+
+      function isSolved() {
+        const goal = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        return tiles.every((val, idx) => val === goal[idx]);
+      }
+
+      function render() {
+        grid.innerHTML = '';
+        tiles.forEach((val, idx) => {
+          const btn = document.createElement('button');
+          if (val === 0) {
+            btn.className = 'w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-950/60 border border-dashed border-slate-700/60 pointer-events-none';
+          } else {
+            btn.className = 'w-20 h-20 sm:w-24 sm:h-24 rounded-xl font-mono text-2xl font-bold bg-gradient-to-br from-indigo-600 to-indigo-800 text-white shadow-md hover:from-indigo-500 hover:to-indigo-700 border border-indigo-400/30 transition transform active:scale-95 flex items-center justify-center';
+            btn.textContent = val;
+            btn.onclick = () => moveTile(idx);
+          }
+          grid.appendChild(btn);
+        });
+      }
+
+      function moveTile(idx) {
+        const emptyIdx = tiles.indexOf(0);
+        const r1 = Math.floor(idx / 3), c1 = idx % 3;
+        const r2 = Math.floor(emptyIdx / 3), c2 = emptyIdx % 3;
+        const isAdjacent = Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
+
+        if (isAdjacent) {
+          Sound.flip();
+          tiles[emptyIdx] = tiles[idx];
+          tiles[idx] = 0;
+          moves++;
+          document.getElementById('statValue').textContent = moves;
+          render();
+
+          if (isSolved()) {
+            winLevel();
+          }
+        } else {
+          Sound.fail();
+        }
+      }
+
+      render();
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel5(container) {
+      const ROWS = 5, COLS = 5, TOTAL_MINES = 3;
+      let board = [];
+      let flagged = 0;
+      let flagMode = false;
+
+      document.getElementById('statLabel').textContent = 'MINES LEFT:';
+      document.getElementById('statValue').textContent = TOTAL_MINES - flagged;
+
+      const mineLocs = new Set();
+      while (mineLocs.size < TOTAL_MINES) {
+        mineLocs.add(Math.floor(Math.random() * (ROWS * COLS)));
+      }
+
+      for (let r = 0; r < ROWS; r++) {
+        board[r] = [];
+        for (let c = 0; c < COLS; c++) {
+          const idx = r * COLS + c;
+          board[r][c] = {
+            isMine: mineLocs.has(idx),
+            revealed: false,
+            flagged: false,
+            adjacent: 0
+          };
+        }
+      }
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (board[r][c].isMine) continue;
+          let count = 0;
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const nr = r + dr, nc = c + dc;
+              if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc].isMine) {
+                count++;
+              }
+            }
+          }
+          board[r][c].adjacent = count;
+        }
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const modeBtn = document.createElement('button');
+      modeBtn.className = 'px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold border border-slate-700 text-slate-200 flex items-center gap-2 hover:bg-slate-700 transition shadow-sm';
+      modeBtn.innerHTML = '<span>Mode:</span> <span id="flagModeStatus" class="text-cyan-400 font-bold">DIG ⛏️</span>';
+      modeBtn.onclick = () => {
+        flagMode = !flagMode;
+        Sound.tap();
+        document.getElementById('flagModeStatus').textContent = flagMode ? 'FLAG 🚩' : 'DIG ⛏️';
+        document.getElementById('flagModeStatus').className = flagMode ? 'text-rose-400 font-bold' : 'text-cyan-400 font-bold';
+      };
+      wrapper.appendChild(modeBtn);
+
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-5 gap-2 p-3 bg-slate-900/90 rounded-2xl border border-indigo-500/30';
+
+      function render() {
+        grid.innerHTML = '';
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const cell = board[r][c];
+            const btn = document.createElement('button');
+            btn.className = `w-12 h-12 sm:w-14 sm:h-14 rounded-xl font-mono text-sm sm:text-base font-bold flex items-center justify-center transition-all ${
+              cell.revealed 
+                ? (cell.isMine ? 'bg-rose-600 text-white' : 'bg-slate-800 text-cyan-300 border border-slate-700') 
+                : (cell.flagged ? 'bg-amber-500/20 text-rose-400 border border-amber-500/40' : 'bg-slate-700/80 hover:bg-slate-600 border border-slate-600')
+            }`;
+
+            if (cell.revealed) {
+              btn.textContent = cell.isMine ? '💣' : (cell.adjacent || '');
+            } else if (cell.flagged) {
+              btn.textContent = '🚩';
+            }
+
+            btn.onclick = () => handleCellClick(r, c);
+            btn.oncontextmenu = (e) => {
+              e.preventDefault();
+              toggleFlag(r, c);
+            };
+            grid.appendChild(btn);
+          }
+        }
+      }
+
+      function toggleFlag(r, c) {
+        const cell = board[r][c];
+        if (cell.revealed) return;
+        Sound.tap();
+        cell.flagged = !cell.flagged;
+        flagged += cell.flagged ? 1 : -1;
+        document.getElementById('statValue').textContent = TOTAL_MINES - flagged;
+        render();
+        checkWinCondition();
+      }
+
+      function handleCellClick(r, c) {
+        if (flagMode) {
+          toggleFlag(r, c);
+          return;
+        }
+        const cell = board[r][c];
+        if (cell.revealed || cell.flagged) return;
+
+        if (cell.isMine) {
+          Sound.explosion();
+          cell.revealed = true;
+          render();
+          showToast('💥 Mine detonated! Resetting field...', 1500);
+          setTimeout(() => setupLevel5(container), 1200);
+          return;
+        }
+
+        Sound.click();
+        revealCell(r, c);
+        render();
+        checkWinCondition();
+      }
+
+      function revealCell(r, c) {
+        if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+        const cell = board[r][c];
+        if (cell.revealed || cell.flagged || cell.isMine) return;
+        cell.revealed = true;
+
+        if (cell.adjacent === 0) {
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              revealCell(r + dr, c + dc);
+            }
+          }
+        }
+      }
+
+      function checkWinCondition() {
+        let correctFlags = 0;
+        let revealedSafe = 0;
+        const totalSafe = (ROWS * COLS) - TOTAL_MINES;
+
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const cell = board[r][c];
+            if (cell.flagged && cell.isMine) correctFlags++;
+            if (cell.revealed && !cell.isMine) revealedSafe++;
+          }
+        }
+
+        if (correctFlags === TOTAL_MINES || revealedSafe === totalSafe) {
+          winLevel();
+        }
+      }
+
+      render();
+      wrapper.appendChild(grid);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel6(container) {
+      const initialTokens = [4, 6, 8, 2];
+      let expression = '';
+
+      document.getElementById('statLabel').textContent = 'TARGET:';
+      document.getElementById('statValue').textContent = '24';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-5 py-2 w-full max-w-sm';
+
+      const display = document.createElement('div');
+      display.className = 'w-full h-16 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-between px-5 font-mono text-xl sm:text-2xl text-cyan-300 overflow-x-auto';
+      
+      const exprSpan = document.createElement('span');
+      exprSpan.textContent = '...';
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'px-3 py-1 rounded-lg bg-slate-800 text-xs text-rose-400 border border-slate-700 hover:bg-slate-700 transition';
+      clearBtn.textContent = 'CLEAR';
+      clearBtn.onclick = () => {
+        Sound.tap();
+        expression = '';
+        exprSpan.textContent = '...';
+        enableAllNumButtons();
+      };
+      display.appendChild(exprSpan);
+      display.appendChild(clearBtn);
+      wrapper.appendChild(display);
+
+      const numGrid = document.createElement('div');
+      numGrid.className = 'grid grid-cols-4 gap-2.5 w-full';
+      const numBtns = [];
+
+      initialTokens.forEach((num) => {
+        const btn = document.createElement('button');
+        btn.className = 'h-14 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-mono text-xl font-bold text-white shadow-md border border-indigo-400/30 transition transform active:scale-95 disabled:opacity-30 disabled:pointer-events-none';
+        btn.textContent = num;
+        btn.onclick = () => {
+          Sound.tap();
+          expression += num;
+          exprSpan.textContent = expression;
+          btn.disabled = true;
+        };
+        numBtns.push(btn);
+        numGrid.appendChild(btn);
+      });
+      wrapper.appendChild(numGrid);
+
+      function enableAllNumButtons() {
+        numBtns.forEach(b => b.disabled = false);
+      }
+
+      const ops = ['+', '-', '*', '/', '(', ')'];
+      const opGrid = document.createElement('div');
+      opGrid.className = 'grid grid-cols-6 gap-2 w-full';
+      ops.forEach(op => {
+        const btn = document.createElement('button');
+        btn.className = 'h-12 rounded-xl bg-slate-800 hover:bg-slate-700 font-mono text-lg font-bold text-cyan-400 border border-slate-700 transition transform active:scale-95';
+        btn.textContent = op === '*' ? '×' : (op === '/' ? '÷' : op);
+        btn.onclick = () => {
+          Sound.tap();
+          expression += op;
+          exprSpan.textContent = expression;
+        };
+        opGrid.appendChild(btn);
+      });
+      wrapper.appendChild(opGrid);
+
+      const evalBtn = document.createElement('button');
+      evalBtn.className = 'w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black tracking-wide text-sm shadow-lg shadow-emerald-500/20 transition';
+      evalBtn.textContent = 'VERIFY EQUATION';
+      evalBtn.onclick = () => {
+        try {
+          if (!expression) return;
+          if (/[^0-9\+\-\*\/\(\)]/.test(expression)) throw new Error();
+          const result = Function(`'use strict'; return (${expression})`)();
+          if (Math.abs(result - 24) < 0.0001) {
+            winLevel();
+          } else {
+            Sound.fail();
+            showToast(`Result is ${result}. Must equal exactly 24!`, 2000);
+          }
+        } catch (e) {
+          Sound.fail();
+          showToast('Invalid math expression syntax!', 1500);
+        }
+      };
+      wrapper.appendChild(evalBtn);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel7(container) {
+      let pegs = [
+        [3, 2, 1],
+        [],
+        []
+      ];
+      let selectedPeg = null;
+      let moves = 0;
+
+      document.getElementById('statLabel').textContent = 'MOVES:';
+      document.getElementById('statValue').textContent = moves;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-6 py-2 w-full max-w-lg';
+
+      const pegContainer = document.createElement('div');
+      pegContainer.className = 'grid grid-cols-3 gap-4 w-full h-48 bg-slate-900/80 rounded-2xl p-4 border border-indigo-500/30 items-end justify-items-center relative';
+
+      function render() {
+        pegContainer.innerHTML = '';
+        pegs.forEach((stack, pegIdx) => {
+          const col = document.createElement('div');
+          col.className = `w-full h-full flex flex-col-reverse items-center justify-start relative cursor-pointer rounded-xl transition ${
+            selectedPeg === pegIdx ? 'bg-indigo-600/20 border-2 border-cyan-400' : 'hover:bg-slate-800/40'
+          }`;
+          col.onclick = () => handlePegClick(pegIdx);
+
+          const pole = document.createElement('div');
+          pole.className = 'w-2 h-36 bg-slate-700 rounded-full absolute bottom-0 -z-0';
+          col.appendChild(pole);
+
+          stack.forEach((diskSize) => {
+            const disk = document.createElement('div');
+            const widthClass = diskSize === 3 ? 'w-24 sm:w-28' : (diskSize === 2 ? 'w-18 sm:w-20' : 'w-12 sm:w-14');
+            const colorClass = diskSize === 3 ? 'bg-indigo-500' : (diskSize === 2 ? 'bg-cyan-500' : 'bg-amber-400');
+            disk.className = `h-7 ${widthClass} ${colorClass} rounded-lg shadow-md z-10 mb-1 border border-white/20 flex items-center justify-center font-mono text-xs font-black text-slate-950`;
+            disk.textContent = diskSize;
+            col.appendChild(disk);
+          });
+
+          const label = document.createElement('div');
+          label.className = 'absolute -bottom-6 font-mono font-bold text-xs text-slate-400';
+          label.textContent = `PEG ${String.fromCharCode(65 + pegIdx)}`;
+          col.appendChild(label);
+
+          pegContainer.appendChild(col);
+        });
+      }
+
+      function handlePegClick(pegIdx) {
+        if (selectedPeg === null) {
+          if (pegs[pegIdx].length > 0) {
+            Sound.tap();
+            selectedPeg = pegIdx;
+            render();
+          }
+        } else {
+          if (selectedPeg === pegIdx) {
+            selectedPeg = null;
+            render();
+            return;
+          }
+          const fromStack = pegs[selectedPeg];
+          const toStack = pegs[pegIdx];
+          const movingDisk = fromStack[fromStack.length - 1];
+          const topDestDisk = toStack[toStack.length - 1];
+
+          if (!topDestDisk || movingDisk < topDestDisk) {
+            Sound.flip();
+            toStack.push(fromStack.pop());
+            moves++;
+            document.getElementById('statValue').textContent = moves;
+            selectedPeg = null;
+            render();
+
+            if (pegs[2].length === 3) {
+              winLevel();
+            }
+          } else {
+            Sound.fail();
+            showToast('Invalid move! Larger disk cannot sit on smaller.', 1500);
+            selectedPeg = null;
+            render();
+          }
+        }
+      }
+
+      render();
+      wrapper.appendChild(pegContainer);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel8(container) {
+      const GRID_SIZE = 12;
+      let snake = [{ x: 6, y: 6 }, { x: 5, y: 6 }];
+      let dir = { x: 1, y: 0 };
+      let food = { x: 8, y: 6 };
+      let applesEaten = 0;
+      const TARGET_APPLES = 5;
+      let gameInterval = null;
+
+      document.getElementById('statLabel').textContent = 'NODES COLLECTED:';
+      document.getElementById('statValue').textContent = `${applesEaten} / ${TARGET_APPLES}`;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-1';
+
+      // Desktop keyboard helper
+      const desktopNotice = document.createElement('div');
+      desktopNotice.className = 'desktop-hint text-xs font-mono text-cyan-300 bg-slate-900/80 px-3 py-1 rounded-lg border border-slate-700';
+      desktopNotice.textContent = '⌨️ Control with Keyboard Arrow Keys (W, A, S, D or Arrows)';
+      wrapper.appendChild(desktopNotice);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 280;
+      canvas.height = 280;
+      canvas.className = 'bg-slate-950 rounded-2xl border border-indigo-500/30 shadow-inner';
+      const ctx = canvas.getContext('2d');
+      wrapper.appendChild(canvas);
+
+      // Mobile Touchpad Controls (Always present on mobile, hidden cleanly on laptop)
+      const pad = document.createElement('div');
+      pad.className = 'mobile-control-pad grid grid-cols-3 gap-2 w-48 mt-1';
+      pad.innerHTML = `
+        <div></div>
+        <button id="sUp" class="p-3.5 bg-slate-800 rounded-xl text-cyan-400 font-bold active:bg-slate-700 shadow border border-slate-700 text-lg">▲</button>
+        <div></div>
+        <button id="sLeft" class="p-3.5 bg-slate-800 rounded-xl text-cyan-400 font-bold active:bg-slate-700 shadow border border-slate-700 text-lg">◀</button>
+        <button id="sDown" class="p-3.5 bg-slate-800 rounded-xl text-cyan-400 font-bold active:bg-slate-700 shadow border border-slate-700 text-lg">▼</button>
+        <button id="sRight" class="p-3.5 bg-slate-800 rounded-xl text-cyan-400 font-bold active:bg-slate-700 shadow border border-slate-700 text-lg">▶</button>
+      `;
+      wrapper.appendChild(pad);
+
+      function spawnFood() {
+        while (true) {
+          const fx = Math.floor(Math.random() * GRID_SIZE);
+          const fy = Math.floor(Math.random() * GRID_SIZE);
+          if (!snake.some(segment => segment.x === fx && segment.y === fy)) {
+            food = { x: fx, y: fy };
+            break;
+          }
+        }
+      }
+
+      function gameStep() {
+        const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+        if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
+          triggerCrash();
+          return;
+        }
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+          triggerCrash();
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+          Sound.eat();
+          applesEaten++;
+          document.getElementById('statValue').textContent = `${applesEaten} / ${TARGET_APPLES}`;
+          if (applesEaten >= TARGET_APPLES) {
+            clearInterval(gameInterval);
+            winLevel();
+            return;
+          }
+          spawnFood();
+        } else {
+          snake.pop();
+        }
+
+        draw();
+      }
+
+      function triggerCrash() {
+        Sound.explosion();
+        clearInterval(gameInterval);
+        showToast('Collision! Restarting trial...', 1200);
+        setTimeout(() => setupLevel8(container), 1000);
+      }
+
+      function draw() {
+        const cellSize = canvas.width / GRID_SIZE;
+        ctx.fillStyle = '#030712';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        for (let x = 0; x < GRID_SIZE; x++) {
+          for (let y = 0; y < GRID_SIZE; y++) {
+            ctx.fillRect(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, 2, 2);
+          }
+        }
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(food.x * cellSize + cellSize / 2, food.y * cellSize + cellSize / 2, cellSize / 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        snake.forEach((seg, idx) => {
+          ctx.fillStyle = idx === 0 ? '#06b6d4' : '#6366f1';
+          ctx.fillRect(seg.x * cellSize + 1, seg.y * cellSize + 1, cellSize - 2, cellSize - 2);
+        });
+      }
+
+      function handleKey(e) {
+        if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') && dir.y === 0) dir = { x: 0, y: -1 };
+        if ((e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') && dir.y === 0) dir = { x: 0, y: 1 };
+        if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && dir.x === 0) dir = { x: -1, y: 0 };
+        if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && dir.x === 0) dir = { x: 1, y: 0 };
+      }
+
+      window.addEventListener('keydown', handleKey);
+
+      pad.querySelector('#sUp').onclick = () => { if (dir.y === 0) dir = { x: 0, y: -1 }; };
+      pad.querySelector('#sDown').onclick = () => { if (dir.y === 0) dir = { x: 0, y: 1 }; };
+      pad.querySelector('#sLeft').onclick = () => { if (dir.x === 0) dir = { x: -1, y: 0 }; };
+      pad.querySelector('#sRight').onclick = () => { if (dir.x === 0) dir = { x: 1, y: 0 }; };
+
+      draw();
+      gameInterval = setInterval(gameStep, 175);
+      container.appendChild(wrapper);
+
+      return () => {
+        clearInterval(gameInterval);
+        window.removeEventListener('keydown', handleKey);
+      };
+    }
+
+    function setupLevel9(container) {
+      const GRID_SIZE = 5;
+      const PALETTE = ['#06b6d4', '#f59e0b', '#10b981', '#ec4899'];
+      let movesLeft = 9;
+      let grid = [];
+
+      document.getElementById('statLabel').textContent = 'MOVES LEFT:';
+      document.getElementById('statValue').textContent = movesLeft;
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        grid[r] = [];
+        for (let c = 0; c < GRID_SIZE; c++) {
+          grid[r][c] = Math.floor(Math.random() * PALETTE.length);
+        }
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2';
+
+      const gridDiv = document.createElement('div');
+      gridDiv.className = 'grid grid-cols-5 gap-2 p-3 bg-slate-900/90 rounded-2xl border border-indigo-500/30';
+
+      function renderGrid() {
+        gridDiv.innerHTML = '';
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'w-10 h-10 sm:w-12 sm:h-12 rounded-xl transition-colors duration-200 shadow-sm border border-white/10';
+            cell.style.backgroundColor = PALETTE[grid[r][c]];
+            if (r === 0 && c === 0) {
+              cell.className += ' ring-2 ring-white flex items-center justify-center text-xs font-black text-slate-950';
+              cell.textContent = '★';
+            }
+            gridDiv.appendChild(cell);
+          }
+        }
+      }
+
+      function floodColor(newColor) {
+        const startColor = grid[0][0];
+        if (newColor === startColor) return;
+        Sound.tap();
+
+        const queue = [[0, 0]];
+        const visited = new Set();
+        visited.add('0,0');
+
+        while (queue.length > 0) {
+          const [r, c] = queue.shift();
+          grid[r][c] = newColor;
+
+          const neighbors = [[r-1, c], [r+1, c], [r, c-1], [r, c+1]];
+          for (let [nr, nc] of neighbors) {
+            if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+              const key = `${nr},${nc}`;
+              if (!visited.has(key) && grid[nr][nc] === startColor) {
+                visited.add(key);
+                queue.push([nr, nc]);
+              }
+            }
+          }
+        }
+
+        movesLeft--;
+        document.getElementById('statValue').textContent = movesLeft;
+        renderGrid();
+
+        const allMatch = grid.every(row => row.every(col => col === newColor));
+        if (allMatch) {
+          winLevel();
+        } else if (movesLeft <= 0) {
+          Sound.fail();
+          showToast('Out of moves! Resetting flood grid...', 1500);
+          setTimeout(() => setupLevel9(container), 1200);
+        }
+      }
+
+      // Color picker controls
+      const colorPad = document.createElement('div');
+      colorPad.className = 'flex items-center gap-3 mt-2';
+      PALETTE.forEach((color, idx) => {
+        const cBtn = document.createElement('button');
+        cBtn.className = 'w-12 h-12 rounded-xl shadow-md border-2 border-slate-700 hover:scale-105 active:scale-95 transition-transform';
+        cBtn.style.backgroundColor = color;
+        cBtn.onclick = () => floodColor(idx);
+        colorPad.appendChild(cBtn);
+      });
+
+      renderGrid();
+      wrapper.appendChild(gridDiv);
+      wrapper.appendChild(colorPad);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupLevel10(container) {
+      const PALETTE = ['#06b6d4', '#f59e0b', '#10b981', '#ec4899', '#8b5cf6'];
+      const secret = [
+        Math.floor(Math.random() * PALETTE.length),
+        Math.floor(Math.random() * PALETTE.length),
+        Math.floor(Math.random() * PALETTE.length)
+      ];
+      let currentGuess = [0, 0, 0];
+      let attemptsLeft = 6;
+
+      document.getElementById('statLabel').textContent = 'GUESSES LEFT:';
+      document.getElementById('statValue').textContent = attemptsLeft;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-4 py-2 w-full max-w-sm';
+
+      // History of past guesses
+      const historyDiv = document.createElement('div');
+      historyDiv.className = 'w-full flex flex-col gap-2 min-h-[140px] max-h-[160px] overflow-y-auto p-3 bg-slate-900/90 rounded-2xl border border-indigo-500/30';
+      wrapper.appendChild(historyDiv);
+
+      // Guess Inputs (cycle on click)
+      const inputRow = document.createElement('div');
+      inputRow.className = 'flex items-center gap-3';
+      const slotBtns = [];
+
+      for (let i = 0; i < 3; i++) {
+        const slot = document.createElement('button');
+        slot.className = 'w-14 h-14 rounded-2xl border-2 border-slate-600 shadow-md transition transform active:scale-95 flex items-center justify-center font-bold text-slate-900';
+        slot.style.backgroundColor = PALETTE[currentGuess[i]];
+        slot.onclick = () => {
+          Sound.tap();
+          currentGuess[i] = (currentGuess[i] + 1) % PALETTE.length;
+          slot.style.backgroundColor = PALETTE[currentGuess[i]];
+        };
+        slotBtns.push(slot);
+        inputRow.appendChild(slot);
+      }
+      wrapper.appendChild(inputRow);
+
+      const submitBtn = document.createElement('button');
+      submitBtn.className = 'w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-black tracking-wide text-sm shadow-lg hover:from-cyan-400 hover:to-indigo-500 transition active:scale-95';
+      submitBtn.textContent = 'CHECK COMBINATION';
+      submitBtn.onclick = () => {
+        Sound.flip();
+        attemptsLeft--;
+        document.getElementById('statValue').textContent = attemptsLeft;
+
+        // Calculate exact (green) and near (yellow) matches
+        let exact = 0;
+        let yellow = 0;
+        const secretCopy = [...secret];
+        const guessCopy = [...currentGuess];
+
+        for (let i = 0; i < 3; i++) {
+          if (guessCopy[i] === secretCopy[i]) {
+            exact++;
+            secretCopy[i] = -1;
+            guessCopy[i] = -2;
+          }
+        }
+
+        for (let i = 0; i < 3; i++) {
+          if (guessCopy[i] >= 0) {
+            const foundIdx = secretCopy.indexOf(guessCopy[i]);
+            if (foundIdx !== -1) {
+              yellow++;
+              secretCopy[foundIdx] = -1;
+            }
+          }
+        }
+
+        // Add to history
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-800/80 border border-slate-700/60';
+        
+        const pinContainer = document.createElement('div');
+        pinContainer.className = 'flex gap-2';
+        currentGuess.forEach(cIdx => {
+          const pin = document.createElement('div');
+          pin.className = 'w-6 h-6 rounded-lg';
+          pin.style.backgroundColor = PALETTE[cIdx];
+          pinContainer.appendChild(pin);
+        });
+
+        const feedback = document.createElement('div');
+        feedback.className = 'font-mono text-xs flex gap-2 font-bold';
+        feedback.innerHTML = `<span class="text-emerald-400">${exact} EXACT</span> <span class="text-amber-400">${yellow} COLOR</span>`;
+
+        row.appendChild(pinContainer);
+        row.appendChild(feedback);
+        historyDiv.prepend(row);
+
+        if (exact === 3) {
+          winLevel();
+        } else if (attemptsLeft <= 0) {
+          Sound.fail();
+          showToast('Cipher locked! Generating new code...', 1500);
+          setTimeout(() => setupLevel10(container), 1200);
+        }
+      };
+
+      wrapper.appendChild(submitBtn);
+      container.appendChild(wrapper);
+      return () => {};
+    }
+
+    function setupProceduralLevel(container, lvl) {
+      let requiredClicks = 5 + Math.floor(lvl / 10);
+      let clicksDone = 0;
+      let timer = 10;
+      let interval = null;
+
+      document.getElementById('statLabel').textContent = 'TIME REMAINING:';
+      document.getElementById('statValue').textContent = `${timer}s`;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center gap-6 py-6';
+
+      const prompt = document.createElement('div');
+      prompt.className = 'text-sm text-slate-300 text-center max-w-sm';
+      prompt.textContent = `Trial ${lvl} Protocol: Rapidly synchronize ${requiredClicks} cognitive pressure nodes before the core destabilizes.`;
+      wrapper.appendChild(prompt);
+
+      const targetArea = document.createElement('div');
+      targetArea.className = 'w-72 h-72 sm:w-80 sm:h-80 bg-slate-900/90 rounded-3xl border border-indigo-500/30 relative overflow-hidden';
+
+      const orb = document.createElement('button');
+      orb.className = 'w-14 h-14 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 absolute shadow-lg shadow-cyan-400/50 transition-all duration-100 flex items-center justify-center font-bold text-slate-950 font-mono text-sm';
+      orb.textContent = requiredClicks;
+
+      function moveOrb() {
+        const maxX = targetArea.clientWidth - 64;
+        const maxY = targetArea.clientHeight - 64;
+        orb.style.left = `${Math.floor(Math.random() * maxX)}px`;
+        orb.style.top = `${Math.floor(Math.random() * maxY)}px`;
+      }
+
+      orb.onclick = () => {
+        Sound.tap();
+        clicksDone++;
+        orb.textContent = requiredClicks - clicksDone;
+        if (clicksDone >= requiredClicks) {
+          clearInterval(interval);
+          winLevel();
+        } else {
+          moveOrb();
+        }
+      };
+
+      targetArea.appendChild(orb);
+      wrapper.appendChild(targetArea);
+      container.appendChild(wrapper);
+
+      moveOrb();
+
+      interval = setInterval(() => {
+        timer--;
+        document.getElementById('statValue').textContent = `${timer}s`;
+        if (timer <= 0) {
+          clearInterval(interval);
+          Sound.fail();
+          showToast('Time expired! Retrying sector calibration...', 1500);
+          setTimeout(() => setupProceduralLevel(container, lvl), 1200);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+
+    window.onload = function () {
+      initDeviceMode();
+      loadProgress();
+      loadLevel(currentLevel);
+    };
+  </script>
+</body>
+</html>
